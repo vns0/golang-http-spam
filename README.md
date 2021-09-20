@@ -7,6 +7,17 @@ database/nginx/cache/etc.
 
 The idea of the project is to give a tool to everyone to clean the market from such stupid scammers
 
+## Setup
+Clone the repository and change the working directory:
+
+    git clone https://github.com/nikitavoryet/golang-http-spam.git
+    cd golang-http-spam
+
+Build and run the program:
+
+    go build -o attack
+    ./attack -url localhost:8080
+
 ## Usage
     ./main -url string [-method string POST | GET] [-data string JSON] [-count int]
 
@@ -19,18 +30,6 @@ The idea of the project is to give a tool to everyone to clean the market from s
           JSON string for body/query to HTTP requst ({"email" : "n.vtorushin@inbox.ru", "test": "test"})
     - count int
           count requst for attack. Default: 10000
-
-
-## Setup
-Clone the repository and change the working directory:
-
-    git clone https://github.com/nikitavoryet/golang-http-spam.git
-    cd golang-http-spam
-
-Build and run the program:
-
-    go build -o attack
-    ./attack -url localhost:8080
 
 # In the plans :
 ```
