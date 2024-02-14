@@ -51,6 +51,9 @@ Windows:
           path to proxy list. Accept: HTTP(S)/SOCKS(4/5)
     -query string
           query params for URL. Accept: GET/POST request
+
+    #If u want work with telegram bot replace global var botToken#
+        bot supports command /spamm with all arguments above
         
 
 # In the plans :
@@ -58,6 +61,7 @@ Windows:
 - [X] GET with query
 - [X] add proxy for attack
 - [X] use go rutina
+- [X] add telegram bot
 - [ ] mass urls attack
 ```
 ```
@@ -68,5 +72,4 @@ Windows:
     Position:      TeamLead
     Mail:          n.vtorushin@inbox.ru
     TG:            @nvtorushin
-    Year of birth: 1999
-    FullStack:     JS/GO
+    About me:      https://vns.guru
