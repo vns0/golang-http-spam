@@ -68,8 +68,6 @@ Windows:
     author: 
 
     Name:          Nikita
-    Company:       OG1
-    Position:      TeamLead
     Mail:          n.vtorushin@inbox.ru
     TG:            @nvtorushin
     About me:      https://vns.guru
