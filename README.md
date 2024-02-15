@@ -34,7 +34,7 @@ Windows:
     ./main.exe -url localhost:8080
 
 ## Usage
-    ./main -url string [-method string POST | GET] [-data string JSON] [-count int]
+    ./main
 
     Usage of ./main:
     -url string
@@ -51,6 +51,8 @@ Windows:
           path to proxy list. Accept: HTTP(S)/SOCKS(4/5)
     -query string
           query params for URL. Accept: GET/POST request
+    -urlPath string
+          path to url list. formula: threads * urlPath
 
     #If u want work with telegram bot replace global var botToken#
         bot supports command /spamm with all arguments above
@@ -62,7 +64,18 @@ Windows:
 - [X] add proxy for attack
 - [X] use go rutina
 - [X] add telegram bot
-- [ ] mass urls attack
+    - [ ] add stop command
+    - [ ] add more commands
+- [X] mass urls attack
+- [ ] add db
+    - [ ] add history table
+    - [ ] add telegram admins list
+    - [ ] add cmd for check history
+- [ ] mass urls attack in telegram bot
+- [ ] add web interface
+    - [ ] create auth
+    - [ ] create dashboard
+    - [ ] create admin pannel
 ```
 ```
     author: 

