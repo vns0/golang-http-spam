@@ -65,11 +65,12 @@ Windows:
 - [X] use go rutina
 - [X] add telegram bot
     - [ ] add stop command
-    - [ ] add more commands
+    - [X] add createAdmin command
+    - [X] add deleteAdmin command
 - [X] mass urls attack
-- [ ] add db
-    - [ ] add history table
-    - [ ] add telegram admins list
+- [X] add db
+    - [X] add history table
+    - [X] add telegram admins list
     - [ ] add cmd for check history
 - [ ] mass urls attack in telegram bot
 - [ ] add web interface

