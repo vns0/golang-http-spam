@@ -1,0 +1,18 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+}
+
+.logo {
+  font-size: 18px;
+}
+
+.logout {
+  cursor: pointer;
+  font-size: 14px;
+  color: #fff;
+}

@@ -1,1 +1,35 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Attack Statistics</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="stat-card">
+        <mat-card>
+          <mat-card-content>
+            <h2>{{ attackCount }}</h2>
+            <p>Total Attacks</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="stat-card">
+        <mat-card>
+          <mat-card-content>
+            <h2>{{ userCount }}</h2>
+            <p>Total Users</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="stat-card">
+        <mat-card>
+          <mat-card-content>
+            <mat-form-field>
+              <input matInput placeholder="Number of Attacks" [(ngModel)]="numberOfAttacks" />
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="startAttack()">Start Attack</button>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
