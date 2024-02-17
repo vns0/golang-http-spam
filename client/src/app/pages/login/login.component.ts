@@ -31,7 +31,6 @@ export class LoginComponent {
       this.authService.login(this.authCode)
         .subscribe(
           (response: AuthSuccessResponse) => {
-            console.log(response)
             this.cookie.setCookie('access',response.access_token, 1)
             this.cookie.setCookie('refresh',response.refresh_token, 1)
             this.router.navigate(["dashboard"]);

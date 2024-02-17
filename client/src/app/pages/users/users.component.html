@@ -5,7 +5,7 @@
 <ng-container *ngIf="isFormVisible">
   <div class="modal-background">
     <div class="modal-container">
-      <form [formGroup]="newUserForm" (ngSubmit)="addUser()" ngNativeValidate>
+      <form [formGroup]="newUserForm" (ngSubmit)="addUser()" ngNativeValidate class="form">
         <mat-form-field>
           <input matInput placeholder="User ID" formControlName="userId">
         </mat-form-field>

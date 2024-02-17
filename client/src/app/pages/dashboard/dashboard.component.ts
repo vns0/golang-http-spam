@@ -25,7 +25,6 @@ export class DashboardComponent implements OnInit {
 
     this.dshboardService.getStats().subscribe(
       (data: statsResponse) => {
-        console.log(data)
         this.attackCount = data.countAttack;
         this.userCount = data.countUsers;
       },

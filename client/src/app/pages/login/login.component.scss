@@ -23,7 +23,7 @@ input {
 
 button {
   padding: 10px 20px;
-  background-color: #007bff; /* Цвет кнопки Submit */
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -31,7 +31,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3; /* Цвет кнопки Submit при наведении */
+  background-color: #0056b3;
 }
 
 .error-message {

@@ -16,7 +16,7 @@ export class UsersComponent implements OnInit {
   isFormVisible = false;
   constructor(private userService: UserService, private fb: FormBuilder) {
     this.newUserForm = this.fb.group({
-      userId: [null, Validators.required], // Предполагается, что userId - это обязательное поле
+      userId: [null, Validators.required],
     });
   }
   addUser() {

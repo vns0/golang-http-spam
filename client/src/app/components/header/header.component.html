@@ -1,4 +1,65 @@
 <header *ngIf="isLoggedIn">
   <div class="logo">SPAM BOT WEB VERSION</div>
-  <div class="logout" (click)="logout()">Logout</div>
+  <div class="actions">
+    <div class="create_attack" (click)="openForm()">Create Attack</div>
+    <div class="logout" (click)="logout()">Logout</div>
+  </div>
+
+  <ng-container *ngIf="isFormAttackVisible">
+    <div class="modal-background">
+      <div class="modal-container">
+        <form [formGroup]="newAttackForm" class="form" (ngSubmit)="createAttack()" ngNativeValidate>
+          <mat-form-field>
+            <label class="label" for="url">URL</label>
+            <input matInput placeholder="URL" formControlName="url" id="url" required>
+            <mat-error *ngIf="newAttackForm.get('url').hasError('invalidUrl')">
+              Please enter a valid URL with protocol (http/https).
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Method</mat-label>
+            <mat-select formControlName="method" required>
+              <mat-option value="GET">GET</mat-option>
+              <mat-option value="POST">POST</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <label class="label"  for="formdata">Formdata</label>
+            <textarea matInput placeholder="Data" id="formdata" formControlName="data"></textarea>
+            <mat-error *ngIf="newAttackForm.get('data').hasError('invalidJson')">
+              Please enter valid JSON.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <label class="label"  for="count">Count requests</label>
+            <input matInput type="number" id="count" placeholder="Count" formControlName="count" required>
+          </mat-form-field>
+
+          <mat-form-field>
+            <label class="label"  for="threads">Threads</label>
+            <input matInput type="number" id="threads" placeholder="threads" formControlName="threads" required>
+          </mat-form-field>
+
+          <mat-form-field>
+            <label class="label"  for="query">Query</label>
+            <input matInput placeholder="Query Params" id="query" formControlName="queryParams">
+            <mat-error *ngIf="newAttackForm.get('queryParams').hasError('invalidQueryParams')">
+              Please enter valid Query Params string (?key1=value1&key2=value2).
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <label class="label"  for="proxyPath">Proxy Path</label>
+            <input matInput placeholder="Proxy" id="proxyPath" formControlName="proxy">
+          </mat-form-field>
+
+          <button mat-button color="primary" type="submit">Add</button>
+          <button mat-button color="warn" (click)="closeForm()">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </ng-container>
 </header>

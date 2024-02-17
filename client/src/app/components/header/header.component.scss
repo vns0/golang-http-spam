@@ -11,8 +11,20 @@ header {
   font-size: 18px;
 }
 
-.logout {
-  cursor: pointer;
-  font-size: 14px;
-  color: #fff;
+.actions {
+  display: flex;
+
+  .logout {
+    cursor: pointer;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .create_attack {
+    cursor: pointer;
+    font-size: 14px;
+    color: #fff;
+    margin-right: 10px;
+  }
 }
+

@@ -27,6 +27,7 @@ import {MatGridListModule} from "@angular/material/grid-list";
 import { SkeletonComponent } from './components/skeleton/skeleton.component';
 import { UsersComponent } from './pages/users/users.component';
 import {MatTableModule} from "@angular/material/table";
+import {MatSelectModule} from "@angular/material/select";
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import {MatTableModule} from "@angular/material/table";
     MatInputModule,
     HttpClientModule,
     MatGridListModule,
-    MatTableModule
+    MatTableModule,
+    MatSelectModule
   ],
   providers: [
     {
