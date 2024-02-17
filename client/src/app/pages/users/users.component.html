@@ -1,0 +1,60 @@
+<div class="header_page">
+  <button mat-raised-button color="primary" (click)="openForm()">Add User</button>
+</div>
+
+<ng-container *ngIf="isFormVisible">
+  <div class="modal-background">
+    <div class="modal-container">
+      <form [formGroup]="newUserForm" (ngSubmit)="addUser()" ngNativeValidate>
+        <mat-form-field>
+          <input matInput placeholder="User ID" formControlName="userId">
+        </mat-form-field>
+
+        <button mat-button color="primary" type="submit">Add</button>
+        <button mat-button color="warn" (click)="closeForm()">Cancel</button>
+      </form>
+    </div>
+  </div>
+</ng-container>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <ng-container matColumnDef="ID">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <td mat-cell *matCellDef="let user">{{ user.ID }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="UserID">
+    <th mat-header-cell *matHeaderCellDef>TG ID</th>
+    <td mat-cell *matCellDef="let user">{{ user.UserID }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="CreatedAt">
+    <th mat-header-cell *matHeaderCellDef>CreatedAt</th>
+    <td mat-cell *matCellDef="let user">{{ user.CreatedAt }}</td>
+  </ng-container>
+  <ng-container matColumnDef="UpdatedAt">
+    <th mat-header-cell *matHeaderCellDef>UpdatedAt</th>
+    <td mat-cell *matCellDef="let user">{{ user.UpdatedAt }}</td>
+  </ng-container>
+  <ng-container matColumnDef="DeletedAt">
+    <th mat-header-cell *matHeaderCellDef>DeletedAt</th>
+    <td mat-cell *matCellDef="let user">
+      {{ user.DeletedAt ? 'YES' : 'NO' }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let user">
+      <button mat-icon-button color="warn" (click)="deleteUser(user.UserID)" *ngIf="user.DeletedAt === null">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" (click)="restoreUser(user.UserID)" *ngIf="user.DeletedAt !== null">
+        <mat-icon>restore</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

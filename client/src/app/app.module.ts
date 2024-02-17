@@ -25,6 +25,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import {MatGridListModule} from "@angular/material/grid-list";
 import { SkeletonComponent } from './components/skeleton/skeleton.component';
+import { UsersComponent } from './pages/users/users.component';
+import {MatTableModule} from "@angular/material/table";
 
 
 @NgModule({
@@ -35,6 +37,7 @@ import { SkeletonComponent } from './components/skeleton/skeleton.component';
     HeaderComponent,
     NavbarComponent,
     SkeletonComponent,
+    UsersComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +54,7 @@ import { SkeletonComponent } from './components/skeleton/skeleton.component';
     MatInputModule,
     HttpClientModule,
     MatGridListModule,
+    MatTableModule
   ],
   providers: [
     {

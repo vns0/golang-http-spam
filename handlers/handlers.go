@@ -27,6 +27,7 @@ func InitAPI() {
 		authedApiRoutes.GET("/users", api.GetUsers)
 		authedApiRoutes.POST("/users", api.CreateUser)
 		authedApiRoutes.GET("/stats", api.GetStats)
+		authedApiRoutes.POST("/users/delete", api.DeleteUser)
 	}
 	router.Run(":8080")
 }
