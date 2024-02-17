@@ -1,0 +1,10 @@
+<!-- auth.component.html -->
+<div class="auth-container">
+  <h1>Login Page</h1>
+  <form (ngSubmit)="submitForm()" ngNativeValidate>
+    <label for="authCode">Authorization Code:</label>
+    <input type="text" id="authCode" name="authCode" required [(ngModel)]="authCode">
+    <button type="submit">Login</button>
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+  </form>
+</div>

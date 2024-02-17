@@ -14,7 +14,9 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"io/ioutil"
+	"main.go/api"
 	"main.go/database"
+	"main.go/handlers"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -35,13 +37,19 @@ type any interface{}
 func main() {
 	database.InitDB()
 	if botToken != "" {
-		if !database.IsAdmin(database.AdminUserID) {
-			database.AddAdmin(database.AdminUserID)
-		}
-		startBot(botToken)
+		go func() {
+			handlers.InitAPI()
+		}()
+		go func() {
+			if !database.IsAdmin(database.AdminUserID) {
+				database.AddAdmin(database.AdminUserID)
+			}
+			startBot(botToken)
+		}()
 	} else {
 		startWithoutBot()
 	}
+	select {}
 }
 
 func startBot(botToken string) {
@@ -70,7 +78,7 @@ func startBot(botToken string) {
 				switch update.Message.Command() {
 				case "start":
 					fmt.Println("get command start", update.Message.Chat)
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Welcome! I'm your HTTP SPAM bot. Use /spam to start the attack. You can provide arguments like /spam -url https://example.com -method GET -data '{\"key\":\"value\"}' -count 100")
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Welcome! I'm your HTTP SPAM bot. Use /spam to start the attack. If you want auth in site use /auth command. You can provide arguments like /spam -url https://example.com -method GET -data '{\"key\":\"value\"}' -count 100")
 					telegramBot.Send(msg)
 				case "spam":
 					args := strings.Split(update.Message.Text, " ")
@@ -107,6 +115,8 @@ func startBot(botToken string) {
 					database.DeleteAdmin(userID)
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Admin removed with id: "+args[1])
 					telegramBot.Send(msg)
+				case "auth":
+					api.ProcessAuthCommand(telegramBot, update.Message)
 				}
 			} else {
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "You are not authorized to use this bot.")

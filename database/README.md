@@ -17,7 +17,7 @@ func InitDB() {
         panic("failed to connect database")
     }
 
-    db.AutoMigrate(&Admin{}, &AttackHistory{})
+    db.AutoMigrate(&User{}, &AttackHistory{})
 }
 ```
 Notes

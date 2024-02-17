@@ -1,0 +1,27 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header-container {
+  width: 100%;
+  background-color: #f0f0f0;
+  z-index: 2;
+}
+
+.content-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+.nav-container {
+  width: 200px;
+  padding: 10px;
+  z-index: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 10px 10px 10px 20px;
+}

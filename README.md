@@ -55,8 +55,10 @@ Windows:
           path to url list. formula: threads * urlPath
 
     #If u want work with telegram bot replace global var botToken#
-        bot supports command /spamm with all arguments above
-        
+        bot supports command /spamm with all arguments above'
+
+## Api auth:
+In order to pass authorization, you need to call the /auth command and enter the received code on the website
 
 # In the plans :
 ```
@@ -73,10 +75,11 @@ Windows:
     - [X] add telegram admins list
     - [ ] add cmd for check history
 - [ ] mass urls attack in telegram bot
-- [ ] add web interface
-    - [ ] create auth
+- [X] add web interface
+    - [X] create auth
     - [ ] create dashboard
     - [ ] create admin pannel
+    - [ ] create module for start attack in web
 ```
 ```
     author: 
