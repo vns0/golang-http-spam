@@ -1,35 +1,38 @@
 <div class="dashboard-container">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Attack Statistics</mat-card-title>
+      <mat-card-title>Statistics</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="stat-card">
-        <mat-card>
-          <mat-card-content>
-            <h2>{{ attackCount }}</h2>
-            <p>Total Attacks</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="stat-card">
-        <mat-card>
-          <mat-card-content>
-            <h2>{{ userCount }}</h2>
-            <p>Total Users</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-      <div class="stat-card">
-        <mat-card>
-          <mat-card-content>
-            <mat-form-field>
-              <input matInput placeholder="Number of Attacks" [(ngModel)]="numberOfAttacks" />
-            </mat-form-field>
-            <button mat-raised-button color="primary" (click)="startAttack()">Start Attack</button>
-          </mat-card-content>
-        </mat-card>
-      </div>
+      <mat-grid-list cols="10" rowHeight="200px">
+        <mat-grid-tile>
+          <mat-card *ngIf="!isLoadingStats">
+            <mat-card-content>
+              <h2>{{ attackCount }}</h2>
+              <p>Total Attacks</p>
+            </mat-card-content>
+          </mat-card>
+          <app-skeleton *ngIf="isLoadingStats"></app-skeleton>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-card *ngIf="!isLoadingStats">
+            <mat-card-content>
+              <h2>{{ userCount }}</h2>
+              <p>Total users</p>
+            </mat-card-content>
+          </mat-card>
+          <app-skeleton *ngIf="isLoadingStats"></app-skeleton>
+        </mat-grid-tile>
+        <!-- Аналогично для других блоков -->
+      </mat-grid-list>
+<!--      <mat-card>-->
+<!--        <mat-card-content>-->
+<!--          <mat-form-field>-->
+<!--            <input matInput placeholder="Number of Attacks" [(ngModel)]="numberOfAttacks" />-->
+<!--          </mat-form-field>-->
+<!--          <button mat-raised-button color="primary" (click)="startAttack()">Start Attack</button>-->
+<!--        </mat-card-content>-->
+<!--      </mat-card>-->
     </mat-card-content>
   </mat-card>
 </div>

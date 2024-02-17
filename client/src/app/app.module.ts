@@ -23,6 +23,8 @@ import { CookieService } from "./utils/cookie.service";
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { HeaderComponent } from './components/header/header.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import {MatGridListModule} from "@angular/material/grid-list";
+import { SkeletonComponent } from './components/skeleton/skeleton.component';
 
 
 @NgModule({
@@ -32,6 +34,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     DashboardComponent,
     HeaderComponent,
     NavbarComponent,
+    SkeletonComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,7 +50,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     FormsModule,
     MatInputModule,
     HttpClientModule,
-
+    MatGridListModule,
   ],
   providers: [
     {
